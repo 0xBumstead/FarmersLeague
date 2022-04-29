@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Base64.sol";
+import "./MetadataLib.sol";
 
 contract VerifiableRandomFootballer is
     ERC721URIStorage,
@@ -18,6 +19,7 @@ contract VerifiableRandomFootballer is
     using Counters for Counters.Counter;
     using Strings for uint256;
     using Base64 for bytes;
+    using MetadataLib for MetadataLib.Metadata; // Library that calculates attributes and svg from 13 random values (one random number expanded into 13)
 
     Counters.Counter private tokenIds;
     bytes32 internal keyHash;
@@ -26,12 +28,18 @@ contract VerifiableRandomFootballer is
     mapping(bytes32 => address) internal requestIdToSender;
     mapping(bytes32 => uint16) internal requestIdToTokenId;
     mapping(uint16 => uint256) internal tokenIdToRandomNumber;
+    mapping(uint16 => uint8[6]) public tokenIdToAttributes; // Used by the PlayerRate contract
 
     event requestedPlayer(bytes32 requestId, uint16 tokenId);
     event PlayerWithRandomness(uint16 tokenId, uint256 randomNumber);
+    event PlayerGenerated(uint16 tokenId, string tokenURI);
 
     error InsufficientValue(uint256 value, uint256 requested);
     error NoSupply();
+    error TokenURISet();
+    error TokenNotMinted();
+    error VRFnotReady();
+    error NotOwner(address sender, address owner);
 
     constructor(
         address _VRFCoordinator,
@@ -50,7 +58,7 @@ contract VerifiableRandomFootballer is
     }
 
     // Set an Id to the future NFT and request a random number to Chainlink VRF
-    function requestPlayer() public payable returns (bytes32 requestId) {
+    function requestPlayer() external payable returns (bytes32 requestId) {
         if (msg.value < price) revert InsufficientValue(msg.value, price);
         if (tokenIds.current() >= 10000) revert NoSupply();
         requestId = requestRandomness(keyHash, fee);
@@ -73,9 +81,30 @@ contract VerifiableRandomFootballer is
         emit PlayerWithRandomness(tokenId, _randomNumber);
     }
 
+    // Creates the metadata for the newly minted empty NFT
+    // using the setTokenURI function and the random number provided by Chainlink node
+    function generatePlayer(uint16 _tokenId) external {
+        if (bytes(tokenURI(_tokenId)).length > 0) revert TokenURISet();
+        if (_tokenId > tokenIds.current()) revert TokenNotMinted();
+        if (tokenIdToRandomNumber[_tokenId] == 0) revert VRFnotReady();
+        if (ownerOf(_tokenId) != msg.sender)
+            revert NotOwner(msg.sender, ownerOf(_tokenId));
+        uint256 randomNumber = tokenIdToRandomNumber[_tokenId];
+        uint256[] memory randomValues = expand(randomNumber, 15);
+        MetadataLib.Metadata memory metadata;
+        metadata = metadata.generatesMetadata(randomValues);
+        _setTokenURI(
+            _tokenId,
+            formatTokenURI(_tokenId, metadata.strAttributes, metadata.svg)
+        );
+        tokenIdToAttributes[_tokenId] = metadata.uintAttributes;
+        emit PlayerGenerated(_tokenId, metadata.svg);
+    }
+
     // Withdraw the ETH collected by the smart contract during the mint
-    function withdraw() public payable onlyOwner {
-        payable(owner()).transfer(address(this).balance);
+    function withdraw() external payable onlyOwner returns (bool success) {
+        uint256 amount = address(this).balance;
+        (success, ) = payable(owner()).call{value: amount}("");
     }
 
     // EIP2981 standard royalties return : 2,5% payable to this contract
@@ -100,6 +129,34 @@ contract VerifiableRandomFootballer is
             super.supportsInterface(interfaceId));
     }
 
+    // Encode all the metadata (attribute and image svg) into a single token URI
+    function formatTokenURI(
+        uint16 _tokenId,
+        string memory _attributes,
+        string memory _svg
+    ) internal pure returns (string memory) {
+        return
+            string.concat(
+                "data:application/json;base64,",
+                Base64.encode(
+                    bytes(
+                        string.concat(
+                            '{"name": "Football player #',
+                            uint256(_tokenId).toString(),
+                            '",',
+                            '"description": "Verified Random Footballer from Farmers league",',
+                            '"attributes": [',
+                            _attributes,
+                            "],",
+                            '"image": "data:image/svg+xml;base64,',
+                            Base64.encode(bytes(_svg)),
+                            '"}'
+                        )
+                    )
+                )
+            );
+    }
+
     // Create multiple random numbers from a single VRF response
     function expand(uint256 _randomNumber, uint8 _n)
         internal
@@ -107,7 +164,7 @@ contract VerifiableRandomFootballer is
         returns (uint256[] memory expandedValues)
     {
         expandedValues = new uint256[](_n);
-        for (uint256 i = 0; i < _n; i++) {
+        for (uint256 i = 0; i < _n; ++i) {
             expandedValues[i] = uint256(
                 keccak256(abi.encode(_randomNumber, i))
             );
