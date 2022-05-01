@@ -16,7 +16,7 @@ def test_can_request_tokenId():
     # Get an account
     owner = get_account()
     # Deploy the contract and fund for ChainLink VRF usage
-    (verifiable_random_footballer, _) = deploy()
+    (verifiable_random_footballer, _, _) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -40,7 +40,7 @@ def test_can_mint_token():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip("Only for local testing")
     owner = get_account()
-    (verifiable_random_footballer, _) = deploy()
+    (verifiable_random_footballer, _, _) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -66,7 +66,7 @@ def test_can_generate_player():
         pytest.skip("Only for local testing")
     owner = get_account()
     not_owner = get_account(index=1)
-    (verifiable_random_footballer, _) = deploy()
+    (verifiable_random_footballer, _, _) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -107,7 +107,7 @@ def test_can_withdraw():
         pytest.skip("Only for local testing")
     owner = get_account()
     not_owner = get_account(index=1)
-    (verifiable_random_footballer, _) = deploy()
+    (verifiable_random_footballer, _, _) = deploy()
     fund_with_link(verifiable_random_footballer.address)
     ownerOldBalance = owner.balance()
     request_tx = verifiable_random_footballer.requestPlayer(
