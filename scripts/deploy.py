@@ -7,6 +7,7 @@ from brownie import (
     MetadataLib,
     KickToken,
     PlayerTransfer,
+    PlayerLoan,
     config,
     network,
 )
@@ -30,10 +31,13 @@ def deploy():
     player_transfer = PlayerTransfer.deploy(
         kick_token.address, verifiable_random_footballer.address, {"from": account}
     )
+    player_loan = PlayerLoan.deploy(
+        kick_token.address, verifiable_random_footballer.address, {"from": account}
+    )
     print("Contracts deployed")
 
     # mint_nft(verifiable_random_footballer)
-    return (verifiable_random_footballer, kick_token, player_transfer)
+    return (verifiable_random_footballer, kick_token, player_transfer, player_loan)
 
 
 def mint_nft(verifiable_random_footballer):
