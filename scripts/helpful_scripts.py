@@ -12,6 +12,7 @@ import time
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-fork", "mainnet-fork-dev"]
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local"]
+POLYGON_TESTNET = ["polygon-test", "mumbai"]
 OPENSEA_URL = "https://testnets.opensea.io/assets/{}/{}"
 DECIMALS = 18
 
