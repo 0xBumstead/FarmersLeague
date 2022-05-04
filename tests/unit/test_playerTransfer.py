@@ -18,7 +18,13 @@ def test_can_list_player():
     owner = get_account()
     not_owner = get_account(index=1)
     # Deploy the contracts and fund for ChainLink VRF usage
-    (verifiable_random_footballer, _, player_transfer, _) = deploy()
+    (
+        verifiable_random_footballer,
+        _,
+        player_transfer,
+        _,
+        _,
+    ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -71,7 +77,13 @@ def test_can_unlist_player():
         pytest.skip("Only for local testing")
     owner = get_account()
     not_owner = get_account(index=1)
-    (verifiable_random_footballer, _, player_transfer, _) = deploy()
+    (
+        verifiable_random_footballer,
+        _,
+        player_transfer,
+        _,
+        _,
+    ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -114,7 +126,13 @@ def test_can_transfer_player():
         pytest.skip("Only for local testing")
     owner = get_account()
     not_owner = get_account(index=1)
-    (verifiable_random_footballer, kick_token, player_transfer, _) = deploy()
+    (
+        verifiable_random_footballer,
+        kick_token,
+        player_transfer,
+        _,
+        _,
+    ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )
@@ -186,7 +204,13 @@ def test_can_withdraw():
         pytest.skip("Only for local testing")
     owner = get_account()
     not_owner = get_account(index=1)
-    (verifiable_random_footballer, kick_token, player_transfer, _) = deploy()
+    (
+        verifiable_random_footballer,
+        kick_token,
+        player_transfer,
+        _,
+        _,
+    ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
     )

@@ -5,6 +5,7 @@ from brownie import (
     KickToken,
     PlayerTransfer,
     PlayerLoan,
+    LeagueTeam,
 )
 
 
@@ -23,6 +24,8 @@ def verify():
         "0xD7A8585B195b595A973090Abb8406E3029D9cFe3"
     )
     VerifiableRandomFootballer.publish_source(verifiable_random_footballer)
+    league_team = LeagueTeam.at("0xf4322b3A8b07C8200b229a85E81885adC2401E54")
+    LeagueTeam.publish_source(league_team)
 
 
 def main():
