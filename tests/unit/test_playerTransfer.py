@@ -24,6 +24,9 @@ def test_can_list_player():
         player_transfer,
         _,
         _,
+        _,
+        _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -83,6 +86,9 @@ def test_can_unlist_player():
         player_transfer,
         _,
         _,
+        _,
+        _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -130,6 +136,9 @@ def test_can_transfer_player():
         verifiable_random_footballer,
         kick_token,
         player_transfer,
+        _,
+        _,
+        _,
         _,
         _,
     ) = deploy()
@@ -208,6 +217,9 @@ def test_can_withdraw():
         verifiable_random_footballer,
         kick_token,
         player_transfer,
+        _,
+        _,
+        _,
         _,
         _,
     ) = deploy()

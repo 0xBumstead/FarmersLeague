@@ -6,6 +6,9 @@ from brownie import (
     PlayerTransfer,
     PlayerLoan,
     LeagueTeam,
+    LeagueGame,
+    PlayerRate,
+    GameResult,
 )
 
 
@@ -26,6 +29,12 @@ def verify():
     VerifiableRandomFootballer.publish_source(verifiable_random_footballer)
     league_team = LeagueTeam.at("0xf4322b3A8b07C8200b229a85E81885adC2401E54")
     LeagueTeam.publish_source(league_team)
+    league_game = LeagueGame.at("0x83021C72E3de6F7720b18290Faf407EFa0B40e70")
+    LeagueGame.publish_source(league_game)
+    player_rate = PlayerRate.at("0x3b1b94C16E10800307596cBC483412fec8B6C969")
+    PlayerRate.publish_source(player_rate)
+    game_result = GameResult.at("0x308ED2068D0FbA5D7d7c9836A83edDDB50692E6e")
+    GameResult.publish_source(game_result)
 
 
 def main():

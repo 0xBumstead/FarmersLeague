@@ -22,6 +22,9 @@ def test_can_request_tokenId():
         _,
         _,
         _,
+        _,
+        _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -48,6 +51,9 @@ def test_can_mint_token():
     owner = get_account()
     (
         verifiable_random_footballer,
+        _,
+        _,
+        _,
         _,
         _,
         _,
@@ -80,6 +86,9 @@ def test_can_generate_player():
     not_owner = get_account(index=1)
     (
         verifiable_random_footballer,
+        _,
+        _,
+        _,
         _,
         _,
         _,
@@ -127,6 +136,9 @@ def test_can_withdraw():
     not_owner = get_account(index=1)
     (
         verifiable_random_footballer,
+        _,
+        _,
+        _,
         _,
         _,
         _,
