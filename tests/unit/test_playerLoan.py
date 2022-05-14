@@ -28,6 +28,7 @@ def test_can_list_player():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -91,6 +92,7 @@ def test_can_unlist_player():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -138,6 +140,7 @@ def test_can_loan_player():
         kick_token,
         _,
         player_loan,
+        _,
         _,
         _,
         _,
@@ -205,7 +208,7 @@ def test_can_loan_player():
     assert kick_token.balanceOf(not_owner) == Web3.toWei(8, "ether")
     assert kick_token.balanceOf(owner) == Web3.toWei(
         99999990 + 2 * 9750 / 10000, "ether"
-    )
+    ) - Web3.toWei(10000 * 100, "ether")
     assert kick_token.balanceOf(player_loan) == Web3.toWei(2 * 250 / 10000, "ether")
     assert loan_tx.events["loanPlayer"]["tokenId"] == token_id_for_loan
     assert loan_tx.events["loanPlayer"]["borrower"] == not_owner
@@ -222,6 +225,7 @@ def test_can_withdraw():
         kick_token,
         _,
         player_loan,
+        _,
         _,
         _,
         _,
@@ -263,7 +267,9 @@ def test_can_withdraw():
     withdraw_tx.wait(1)
 
     assert kick_token.balanceOf(player_loan) == 0
-    assert kick_token.balanceOf(owner) == Web3.toWei(99999992, "ether")
+    assert kick_token.balanceOf(owner) == Web3.toWei(99999992, "ether") - Web3.toWei(
+        10000 * 100, "ether"
+    )
 
 
 def test_can_set_maximum_duration():
@@ -276,6 +282,7 @@ def test_can_set_maximum_duration():
         _,
         _,
         player_loan,
+        _,
         _,
         _,
         _,

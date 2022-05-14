@@ -26,6 +26,7 @@ def test_can_create_team():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -133,6 +134,7 @@ def test_can_remove_team():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -209,6 +211,7 @@ def test_can_apply_for_team():
         _,
         player_loan,
         league_team,
+        _,
         _,
         _,
         _,
@@ -351,6 +354,7 @@ def test_can_cancel_application():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -445,6 +449,7 @@ def test_can_validate_application():
         _,
         player_loan,
         league_team,
+        _,
         _,
         _,
         _,
@@ -609,6 +614,7 @@ def test_can_clear_applications():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -686,6 +692,7 @@ def test_can_release_player():
         _,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -757,6 +764,7 @@ def test_can_pay_release_clause():
         _,
         _,
         league_team,
+        _,
         _,
         _,
         _,
@@ -842,6 +850,7 @@ def test_can_withdraw():
         _,
         _,
         _,
+        _,
     ) = deploy()
     transfer_tx = kick_token.transfer(
         not_owner, kick_token.balanceOf(owner), {"from": owner}
@@ -889,6 +898,7 @@ def test_can_set_creation_price():
         _,
         _,
         league_team,
+        _,
         _,
         _,
         _,
@@ -941,6 +951,7 @@ def test_can_set_release_price():
         _,
         _,
         league_team,
+        _,
         _,
         _,
         _,

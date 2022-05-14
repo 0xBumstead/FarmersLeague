@@ -27,6 +27,7 @@ def test_can_sign_up_team():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -119,6 +120,7 @@ def test_cancel_sign_up():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -177,7 +179,7 @@ def test_cancel_sign_up():
 
     assert kick_token.balanceOf(owner) == Web3.toWei(100000000, "ether") - Web3.toWei(
         10, "ether"
-    )
+    ) - Web3.toWei(10000 * 100, "ether")
     assert kick_token.balanceOf(league_game) == Web3.toWei(0, "ether")
     assert league_game.teamGame(team_id, 0) == 0
     assert league_game.teamGame(team_id, 1) == 0
@@ -202,6 +204,7 @@ def test_can_challenge_team():
         _,
         league_team,
         league_game,
+        _,
         _,
         _,
     ) = deploy()
@@ -337,6 +340,7 @@ def test_can_decline_challenge():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -454,6 +458,7 @@ def test_can_request_game():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -568,6 +573,7 @@ def test_can_set_game():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -662,6 +668,7 @@ def test_can_set_challenge_time():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
 
     # Change the time from an account not owner should fail
@@ -687,6 +694,7 @@ def test_can_set_prices():
         _,
         _,
         league_game,
+        _,
         _,
         _,
     ) = deploy()
@@ -724,6 +732,7 @@ def test_can_set_game_delay():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
 
     # Change the prices from an account not owner should fail
@@ -751,6 +760,7 @@ def test_can_withdraw_link():
         _,
         _,
         league_game,
+        _,
         _,
         _,
     ) = deploy()
@@ -781,6 +791,7 @@ def test_can_withdraw_kick():
         _,
         _,
         league_game,
+        _,
         _,
         _,
     ) = deploy()

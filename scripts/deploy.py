@@ -12,6 +12,7 @@ from brownie import (
     LeagueGame,
     PlayerRate,
     GameResult,
+    ClaimKickToken,
     config,
     network,
 )
@@ -71,17 +72,25 @@ def deploy():
         game_result.address, {"from": account}
     )
     set_contract_address_tx.wait(1)
+    claim_kick_token = ClaimKickToken.deploy(
+        kick_token.address, verifiable_random_footballer.address, {"from": account}
+    )
+    transfer_kick = kick_token.transfer(
+        claim_kick_token, Web3.toWei(10000 * 100, "ether"), {"from": account}
+    )
+    transfer_kick.wait(1)
     print("Contracts deployed")
 
     return (
         verifiable_random_footballer,
         kick_token,
-        player_loan,
         player_transfer,
+        player_loan,
         league_team,
         league_game,
         player_rate,
         game_result,
+        claim_kick_token,
     )
 
 

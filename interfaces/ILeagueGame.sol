@@ -21,12 +21,12 @@ interface ILeagueGame {
     function teamChallenge(uint256 _firstTeamId, uint256 _secondTeamId)
         external
         view
-        returns (uint256 _teamChallenge);
+        returns (uint256 teamChallenge);
 
     function requestIdToGameId(bytes32 _requestId)
         external
         view
-        returns (uint256 _requestIdToGameId);
+        returns (uint256 requestIdToGameId);
 
     function signUpTeam(uint256 _teamId, uint256 _layout)
         external

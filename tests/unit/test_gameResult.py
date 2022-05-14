@@ -23,6 +23,7 @@ def test_can_set_game_result_contract():
         league_game,
         _,
         _,
+        _,
     ) = deploy()
 
     # Set the address if already set should fail
@@ -45,6 +46,7 @@ def test_can_finish_game():
         league_team,
         league_game,
         player_rate,
+        _,
         _,
     ) = deploy()
     fund_with_link(

@@ -25,6 +25,7 @@ def test_can_sign_up_player():
         league_game,
         player_rate,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -206,6 +207,7 @@ def test_can_calculate_players_rates():
         league_game,
         player_rate,
         _,
+        _,
     ) = deploy()
     fund_with_link(
         verifiable_random_footballer.address, owner, None, Web3.toWei(100, "ether")
@@ -335,6 +337,7 @@ def test_can_set_game_duration():
         _,
         player_rate,
         _,
+        _,
     ) = deploy()
 
     # Change the prices from an account not owner should fail
@@ -362,6 +365,7 @@ def test_can_set_duration_between_games():
         _,
         player_rate,
         _,
+        _,
     ) = deploy()
 
     # Change the prices from an account not owner should fail
@@ -388,6 +392,7 @@ def test_can_set_preregistration():
         _,
         _,
         player_rate,
+        _,
         _,
     ) = deploy()
 

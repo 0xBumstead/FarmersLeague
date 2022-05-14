@@ -31,7 +31,7 @@ interface IPlayerRate {
     function positionIds(uint8 _position)
         external
         view
-        returns (uint8 _positionId);
+        returns (uint8 positionId);
 
     function layoutPositions(uint256 _layoutId, uint8 _position)
         external

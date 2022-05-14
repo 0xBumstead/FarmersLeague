@@ -9,6 +9,7 @@ from brownie import (
     LeagueGame,
     PlayerRate,
     GameResult,
+    ClaimKickToken,
 )
 
 
@@ -35,6 +36,8 @@ def verify():
     PlayerRate.publish_source(player_rate)
     game_result = GameResult.at("0x308ED2068D0FbA5D7d7c9836A83edDDB50692E6e")
     GameResult.publish_source(game_result)
+    claim_kick_token = ClaimKickToken.at("0x996198DF82B0773123a6405Bf978cA1426Cae6F6")
+    ClaimKickToken.publish_source(claim_kick_token)
 
 
 def main():
