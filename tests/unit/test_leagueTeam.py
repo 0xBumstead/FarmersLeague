@@ -87,6 +87,7 @@ def test_can_create_team():
     assert league_team.playersTeam(token_id) == 1
     assert create_tx.events["teamCreation"]["teamId"] == 1
     assert create_tx.events["teamCreation"]["captainId"] == token_id
+    assert league_team.nbOfTeams() == 1
 
     # Mint a second player (no need to generate metadata here)
     request_tx = verifiable_random_footballer.requestPlayer(

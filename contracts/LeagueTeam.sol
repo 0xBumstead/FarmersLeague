@@ -229,4 +229,8 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
         releasePrice = _price;
         emit updateReleasePrice(_price);
     }
+
+    function nbOfTeams() external view returns (uint256 lastTeamId) {
+        lastTeamId = teamIds.current() - 1;
+    }
 }

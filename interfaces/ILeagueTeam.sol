@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 interface ILeagueTeam {
+    function nbOfTeams() external view returns (uint256 lastTeamId);
+
     function teamCreationPrice() external view returns (uint256 price);
 
     function releasePrice() external view returns (uint256 price);
