@@ -1,5 +1,5 @@
 from web3 import Web3
-from scripts.helpful_scripts import get_account, get_contract
+from scripts.helpful_scripts import get_account, get_contract, fund_with_link
 from brownie import (
     VerifiableRandomFootballer,
     Base64,
@@ -32,6 +32,9 @@ def deploy():
         Web3.toWei(0.1, "ether"),
         {"from": account},
     )
+    fund_with_link(
+        verifiable_random_footballer.address, account, None, Web3.toWei(1, "ether")
+    )
     kick_token = KickToken.deploy({"from": account})
     player_loan = PlayerLoan.deploy(
         kick_token.address, verifiable_random_footballer.address, {"from": account}
@@ -58,6 +61,7 @@ def deploy():
         config["networks"][network.show_active()]["fee"],
         {"from": account},
     )
+    fund_with_link(league_game.address, account, None, Web3.toWei(1, "ether"))
     player_rate = PlayerRate.deploy(
         league_game.address,
         league_team.address,

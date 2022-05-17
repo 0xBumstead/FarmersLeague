@@ -233,4 +233,22 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
     function nbOfTeams() external view returns (uint256 lastTeamId) {
         lastTeamId = teamIds.current() - 1;
     }
+
+    function teamMembersArray(uint256 _teamId)
+        external
+        view
+        returns (uint16[23] memory membersArray)
+    {
+        for (uint8 i = 1; i < 24; ++i) {
+            membersArray[i - 1] = (teamMembers[_teamId][i]);
+        }
+    }
+
+    function teamApplicationsArray(uint256 _teamId)
+        external
+        view
+        returns (uint16[] memory applicationsArray)
+    {
+        applicationsArray = teamApplications[_teamId];
+    }
 }

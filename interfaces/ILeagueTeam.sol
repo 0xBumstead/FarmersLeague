@@ -18,6 +18,11 @@ interface ILeagueTeam {
         view
         returns (uint16 member);
 
+    function teamMembersArray(uint256 _teamId)
+        external
+        view
+        returns (uint16[23] memory membersArray);
+
     function playersApplication(uint16 _playerId)
         external
         view
@@ -27,6 +32,11 @@ interface ILeagueTeam {
         external
         view
         returns (uint16 application);
+
+    function teamApplicationsArray(uint256 _teamId)
+        external
+        view
+        returns (uint16[] memory applicationsArray);
 
     function createTeam(uint16 _captainId)
         external
