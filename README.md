@@ -2,6 +2,7 @@
 
 ## Table of Contents
 - [Abstract](#abstract)
+- [Addresses](#addresses)
 - [KICK Token](#kick-token)
 - [NFTs](#nfts)
     - [Attributes](#attributes)
