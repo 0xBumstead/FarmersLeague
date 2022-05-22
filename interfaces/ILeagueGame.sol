@@ -28,8 +28,8 @@ interface ILeagueGame {
         view
         returns (uint256 requestIdToGameId);
 
-    function signUpTeam(uint256 _teamId, uint256 _layout)
-        external
+    function signUpTeam(uint256 _teamId, uint256 _layout, uint256 _stake)
+        external payable
         returns (bool success);
 
     function challengeTeam(uint256 _teamId, uint256 _opponentTeamId)

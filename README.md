@@ -1,4 +1,4 @@
-# FARMERS LEAGUE / VERIFIABLE RANDOM FOOTBALLER
+# FARMERS LEAGUE / VERIFIABLE RANDOM FOOTBALLER
 
 ## Table of Contents
 - [Abstract](#abstract)
@@ -60,7 +60,7 @@ The game result depends for half on the players NFT attributes, half on the team
 
 ## Addresses
 
-Website (under construction) : https://earnest-custard-073ac0.netlify.app
+Website (under construction) : https://farmers-league.netlify.app/
 
 Repo for smart contracts and scripts : https://github.com/0xBumstead/FarmersLeague
 
