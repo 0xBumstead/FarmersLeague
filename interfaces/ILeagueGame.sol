@@ -18,10 +18,10 @@ interface ILeagueGame {
         view
         returns (uint256 gameData);
 
-    function teamChallenge(uint256 _firstTeamId, uint256 _secondTeamId)
+    function teamChallenge(uint256 _challengedTeamId, uint256 _challengingTeamId)
         external
         view
-        returns (uint256 teamChallenge);
+        returns (uint256 challengeDeadLine);
 
     function requestIdToGameId(bytes32 _requestId)
         external
@@ -30,6 +30,10 @@ interface ILeagueGame {
 
     function signUpTeam(uint256 _teamId, uint256 _layout, uint256 _stake)
         external payable
+        returns (bool success);
+
+    function cancelSignUp(uint256 _teamId)
+        external
         returns (bool success);
 
     function challengeTeam(uint256 _teamId, uint256 _opponentTeamId)

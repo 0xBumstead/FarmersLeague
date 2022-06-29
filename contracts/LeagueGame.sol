@@ -46,15 +46,18 @@ contract LeagueGame is
     // teamId => gameId[0] (1 = team is waiting for opponent, 2 = team is challenging an opponent, 3 = team is challenged by an opponent
     // 4 = team has a game set), gameId[1] = gameId, gameId[2] = layoutId, gameId[3] = stake amount
     mapping(uint256 => uint256[3]) public games; // gameId => gameBlockNumber (0), receivingTeam (1), awayTeam (2)
-    mapping(uint256 => mapping(uint256 => uint256)) public teamChallenge; // teamId => challenged teamId => deadline to refuse (number of blocks)
+    mapping(uint256 => mapping(uint256 => uint256)) public teamChallenge; // teamId => challenging teamId => deadline to refuse (number of blocks)
     mapping(bytes32 => uint256) requestIdToGameId;
 
     event teamSignedUp(uint256 teamId);
     event signUpCanceled(uint256 teamId);
-    event teamChallenged(uint256 challengedTeamId, uint256 challengingTeamId);
+    event teamChallenged(
+        uint256 indexed challengedTeamId,
+        uint256 indexed challengingTeamId
+    );
     event challengeDeclined(
-        uint256 challengedTeamId,
-        uint256 challengingTeamId
+        uint256 indexed challengedTeamId,
+        uint256 indexed challengingTeamId
     );
     event gameRequested(
         bytes32 requestId,
@@ -62,8 +65,8 @@ contract LeagueGame is
         uint256 secondTeam,
         uint256 gameId
     );
-    event gameSet(uint256 gameId, uint256 blockNumber);
-    event gameFinished(uint256 gameId, uint8 result);
+    event gameSet(uint256 indexed gameId, uint256 blockNumber);
+    event gameFinished(uint256 indexed gameId, uint8 result);
     event updateChallengeTime(uint256 time);
     event updatePrices(
         uint256 signedUpPrice,

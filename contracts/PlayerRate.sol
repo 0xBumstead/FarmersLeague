@@ -37,7 +37,11 @@ contract PlayerRate is Ownable, PlayerOwnership {
     event updateGameDuration(uint256 duration);
     event updateDurationBetweenGames(uint256 duration);
     event updatePreRegistration(uint256 duration);
-    event playerSignedUp(uint256 gameId, uint16 playerId, uint8 position);
+    event playerSignedUp(
+        uint256 indexed gameId,
+        uint16 indexed playerId,
+        uint8 position
+    );
 
     constructor(
         address _LeagueGame,
