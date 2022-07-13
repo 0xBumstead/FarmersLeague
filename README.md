@@ -72,7 +72,7 @@ Repo for front end : https://github.com/0xBumstead/farmersleague-frontend
 - NFT (ERC721) - VerifiableRandomFootballer: [0xD7A8585B195b595A973090Abb8406E3029D9cFe3](https://mumbai.polygonscan.com/address/0xD7A8585B195b595A973090Abb8406E3029D9cFe3)
 - ERC20 - KickToken: [0xCBb1a5BeC29b33225878042F4294832fb5D6768b](https://mumbai.polygonscan.com/address/0xCBb1a5BeC29b33225878042F4294832fb5D6768b)
 - PlayerTransfer: [0x26342b83257DE4F2464c9324b69908372E272854](https://mumbai.polygonscan.com/address/0x26342b83257DE4F2464c9324b69908372E272854)
-- PlayerLoan: [0x129a1Df192AE111b1D884609f32e76b8f103ECBD](https://mumbai.polygonscan.com/address/0x129a1Df192AE111b1D884609f32e76b8f103ECBD)
+- PlayerLoan: [0xd87BA055EDF050B0d6AF1775d2abE470F0771f59](https://mumbai.polygonscan.com/address/0xd87BA055EDF050B0d6AF1775d2abE470F0771f59)
 - LeagueTeam: [0xBC8765fe84598C70D48Ca3b3D63b9afe5Ff805B9](https://mumbai.polygonscan.com/address/0xBC8765fe84598C70D48Ca3b3D63b9afe5Ff805B9)
 - LeagueGame: [0x0e5249a21BbaD5C1418F9d3b71dddd9669a1Aa6D](https://mumbai.polygonscan.com/address/0x0e5249a21BbaD5C1418F9d3b71dddd9669a1Aa6D)
 - PlayerRate: [0xE6e49ECFafA22D4C550258B5b9d1D270Bf39F804](https://mumbai.polygonscan.com/address/0xE6e49ECFafA22D4C550258B5b9d1D270Bf39F804)

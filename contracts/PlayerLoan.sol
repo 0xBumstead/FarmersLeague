@@ -17,11 +17,15 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
     IERC20 public kickToken;
     IERC721 public verifiableRandomFootballer;
 
+    struct Listing {
+        uint256 duration;
+        uint256 price;
+    }
     struct LoanTerm {
         address borrower;
         uint256 term;
     }
-    mapping(uint16 => uint256[2]) public playersForLoan; // Mapping of tokenId to duration and price
+    mapping(uint16 => Listing) public playersForLoan; // Mapping of tokenId to duration and price
     mapping(uint16 => LoanTerm) public loans; // Mapping of tokenId to borrower and term (ending block)
     uint256 public maximumDuration;
 
@@ -46,11 +50,13 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
                 msg.sender,
                 verifiableRandomFootballer.ownerOf(_playerId)
             );
-        if (playersForLoan[_playerId][0] > 0) revert AlreadyListed();
+        Listing memory _listing = playersForLoan[_playerId];
+        if (_listing.duration > 0) revert AlreadyListed();
         if (_duration > maximumDuration)
             revert MaxDuration(_duration, maximumDuration);
-        playersForLoan[_playerId][0] = _duration;
-        playersForLoan[_playerId][1] = _price;
+        _listing.duration = _duration;
+        _listing.price = _price;
+        playersForLoan[_playerId] = _listing;
         emit listingPlayerForLoan(_playerId, _duration, _price);
     }
 
@@ -60,19 +66,22 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
                 msg.sender,
                 verifiableRandomFootballer.ownerOf(_playerId)
             );
-        if (playersForLoan[_playerId][0] <= 0) revert NotListed();
-        playersForLoan[_playerId][0] = 0;
-        playersForLoan[_playerId][1] = 0;
+        Listing memory _listing = playersForLoan[_playerId];
+        if (_listing.duration <= 0) revert NotListed();
+        _listing.duration = 0;
+        _listing.price = 0;
+        playersForLoan[_playerId] = _listing;
         emit unlistingPlayer(_playerId);
     }
 
     function loan(uint16 _playerId) external payable nonReentrant {
-        uint256 _term = playersForLoan[_playerId][0] + block.number; // term is the block when the loans ends
-        uint256 _price = playersForLoan[_playerId][1]; // price and duration of the loan are coming from the listing
+        Listing memory _listing = playersForLoan[_playerId];
+        uint256 _term = _listing.duration + block.number; // term is the block when the loans ends
+        uint256 _price = _listing.price; // price and duration of the loan are coming from the listing
         address _lender = verifiableRandomFootballer.ownerOf(_playerId);
         if (_price > kickToken.balanceOf(msg.sender))
             revert BalanceTooLow(kickToken.balanceOf(msg.sender), _price);
-        if (playersForLoan[_playerId][0] <= 0) revert NotListed();
+        if (_listing.duration <= 0) revert NotListed();
         if (block.number < loans[_playerId].term) revert AlreadyOnLoan();
         LoanTerm memory loanTerm;
         loanTerm.borrower = msg.sender;

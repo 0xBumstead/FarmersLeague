@@ -74,8 +74,7 @@ def test_can_list_player():
     assert player_id == token_id
     assert duration == 1000
     assert price == Web3.toWei(2, "ether")
-    assert duration == player_loan.playersForLoan(token_id, 0)
-    assert price == player_loan.playersForLoan(token_id, 1)
+    assert player_loan.playersForLoan(token_id) == (duration, price)
 
 
 def test_can_unlist_player():
@@ -126,8 +125,7 @@ def test_can_unlist_player():
         player_loan.unlistPlayer(token_id, {"from": owner})
 
     assert player_id == token_id
-    assert player_loan.playersForLoan(token_id, 0) == 0
-    assert player_loan.playersForLoan(token_id, 1) == 0
+    assert player_loan.playersForLoan(token_id) == (0, 0)
 
 
 def test_can_loan_player():
