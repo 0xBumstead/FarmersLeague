@@ -26,6 +26,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         uint256 term;
     }
     mapping(uint16 => Listing) public playersForLoan; // Mapping of tokenId to duration and price
+    uint16[] public loanList;
     mapping(uint16 => LoanTerm) public loans; // Mapping of tokenId to borrower and term (ending block)
     uint256 public maximumDuration;
 
@@ -57,6 +58,17 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         _listing.duration = _duration;
         _listing.price = _price;
         playersForLoan[_playerId] = _listing;
+        for (uint256 i = 0; i < loanList.length; ++i) {
+            if (loanList[i] == 0) {
+                loanList[i] = _playerId;
+                break;
+            } else if (i == loanList.length - 1) {
+                loanList.push(_playerId);
+            }
+        }
+        if (loanList.length == 0) {
+            loanList.push(_playerId);
+        }
         emit listingPlayerForLoan(_playerId, _duration, _price);
     }
 
@@ -71,6 +83,12 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         _listing.duration = 0;
         _listing.price = 0;
         playersForLoan[_playerId] = _listing;
+        for (uint256 i = 0; i < loanList.length; ++i) {
+            if (loanList[i] == _playerId) {
+                loanList[i] = 0;
+                break;
+            }
+        }
         emit unlistingPlayer(_playerId);
     }
 

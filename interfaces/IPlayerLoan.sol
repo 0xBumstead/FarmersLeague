@@ -7,6 +7,8 @@ interface IPlayerLoan {
         view
         returns (uint256 duration, uint256 price);
 
+    function loanList() external view returns (uint16[] memory _playerIds);
+
     function loans(uint16 _playerId)
         external
         view

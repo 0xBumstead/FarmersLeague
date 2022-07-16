@@ -17,6 +17,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
     IERC721 public verifiableRandomFootballer;
 
     mapping(uint16 => uint256) public playersForTransfer; // Mapping of tokenId to price
+    uint16[] public transferList;
 
     event listingPlayerForTransfer(uint16 tokenId, uint256 price);
     event unlistingPlayer(uint16 tokenId);
@@ -36,6 +37,17 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
         if (verifiableRandomFootballer.getApproved(_playerId) != address(this))
             revert NotApproved();
         playersForTransfer[_playerId] = _price;
+        for (uint256 i = 0; i < transferList.length; ++i) {
+            if (transferList[i] == 0) {
+                transferList[i] = _playerId;
+                break;
+            } else if (i == transferList.length - 1) {
+                transferList.push(_playerId);
+            }
+        }
+        if (transferList.length == 0) {
+            transferList.push(_playerId);
+        }
         emit listingPlayerForTransfer(_playerId, _price);
     }
 
@@ -47,6 +59,12 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             );
         if (playersForTransfer[_playerId] <= 0) revert NotListed();
         playersForTransfer[_playerId] = 0;
+        for (uint256 i = 0; i < transferList.length; ++i) {
+            if (transferList[i] == _playerId) {
+                transferList[i] = 0;
+                break;
+            }
+        }
         emit unlistingPlayer(_playerId);
     }
 
@@ -69,7 +87,13 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             msg.sender,
             _playerId
         );
-        playersForTransfer[_playerId] = 0;
+        playersForTransfer[_playerId] = 0; //remove the player from the transfer list
+        for (uint256 i = 0; i < transferList.length; ++i) {
+            if (transferList[i] == _playerId) {
+                transferList[i] = 0;
+                break;
+            }
+        }
         emit unlistingPlayer(_playerId);
     }
 

@@ -7,6 +7,8 @@ interface IPlayerTransfer {
         view
         returns (uint256 price);
 
+    function transferList() external view returns (uint16[] memory playerIds);
+
     function listPlayerForTransfer(uint256 _price, uint16 _playerId)
         external
         returns (bool success);
