@@ -17,7 +17,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
     IERC721 public verifiableRandomFootballer;
 
     mapping(uint16 => uint256) public playersForTransfer; // Mapping of tokenId to price
-    uint16[] public transferList;
+    uint16[] internal transferList;
 
     event listingPlayerForTransfer(uint16 tokenId, uint256 price);
     event unlistingPlayer(uint16 tokenId);
@@ -95,6 +95,14 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             }
         }
         emit unlistingPlayer(_playerId);
+    }
+
+    function getTransferListArray()
+        external
+        view
+        returns (uint16[] memory transfertListArray)
+    {
+        return transferList;
     }
 
     function withdraw() external payable onlyOwner {

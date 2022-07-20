@@ -26,7 +26,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         uint256 term;
     }
     mapping(uint16 => Listing) public playersForLoan; // Mapping of tokenId to duration and price
-    uint16[] public loanList;
+    uint16[] internal loanList;
     mapping(uint16 => LoanTerm) public loans; // Mapping of tokenId to borrower and term (ending block)
     uint256 public maximumDuration;
 
@@ -114,6 +114,14 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
             (_price * 250) / 10000
         );
         emit loanPlayer(_playerId, msg.sender, _term);
+    }
+
+    function getLoanListArray()
+        external
+        view
+        returns (uint16[] memory loanListArray)
+    {
+        return loanList;
     }
 
     function setMaximumDuration(uint256 _duration) external onlyOwner {

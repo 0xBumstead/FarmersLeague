@@ -74,7 +74,7 @@ def test_can_list_player():
     assert player_id == token_id
     assert price == Web3.toWei(2, "ether")
     assert price == player_transfer.playersForTransfer(token_id)
-    assert player_transfer.transferList(0) == token_id
+    assert player_transfer.getTransferListArray() == (token_id,)
 
 
 def test_can_unlist_player():
@@ -128,7 +128,7 @@ def test_can_unlist_player():
 
     assert player_id == token_id
     assert player_transfer.playersForTransfer(token_id) == 0
-    assert player_transfer.transferList(0) == 0
+    assert player_transfer.getTransferListArray() == (0,)
 
 
 def test_can_transfer_player():
@@ -211,7 +211,7 @@ def test_can_transfer_player():
     assert transfer_tx.events["unlistingPlayer"]["tokenId"] == token_id_for_transfer
     assert player_transfer.playersForTransfer(token_id_for_transfer) == 0
     assert verifiable_random_footballer.ownerOf(token_id_for_transfer) == not_owner
-    assert player_transfer.transferList(0) == 0
+    assert player_transfer.getTransferListArray() == (0,)
 
 
 def test_can_withdraw():

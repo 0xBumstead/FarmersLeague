@@ -14,9 +14,9 @@ from brownie import (
 
 
 def verify():
-    player_loan = PlayerLoan.at("0x129a1Df192AE111b1D884609f32e76b8f103ECBD")
+    player_loan = PlayerLoan.at("0xAA0F732D25667ABfA5C5Ce125Ee7519bc76a56cE")
     PlayerLoan.publish_source(player_loan)
-    player_transfer = PlayerTransfer.at("0x26342b83257DE4F2464c9324b69908372E272854")
+    player_transfer = PlayerTransfer.at("0xd52f7465FD7713B04113FF0c550D666f3afaa190")
     PlayerTransfer.publish_source(player_transfer)
     kick_token = KickToken.at("0xCBb1a5BeC29b33225878042F4294832fb5D6768b")
     KickToken.publish_source(kick_token)
