@@ -37,7 +37,8 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
         if (verifiableRandomFootballer.getApproved(_playerId) != address(this))
             revert NotApproved();
         playersForTransfer[_playerId] = _price;
-        for (uint256 i = 0; i < transferList.length; ++i) {
+        uint256 _listLength = transferList.length;
+        for (uint256 i = 0; i < _listLength; ++i) {
             if (transferList[i] == 0) {
                 transferList[i] = _playerId;
                 break;

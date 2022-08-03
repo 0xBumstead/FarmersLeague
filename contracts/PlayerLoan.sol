@@ -58,7 +58,8 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         _listing.duration = _duration;
         _listing.price = _price;
         playersForLoan[_playerId] = _listing;
-        for (uint256 i = 0; i < loanList.length; ++i) {
+        uint256 _listLength = loanList.length;
+        for (uint256 i = 0; i < _listLength; ++i) {
             if (loanList[i] == 0) {
                 loanList[i] = _playerId;
                 break;
