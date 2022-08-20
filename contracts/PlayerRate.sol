@@ -678,6 +678,14 @@ contract PlayerRate is Ownable, PlayerOwnership {
         return true;
     }
 
+    function getGamePlayers(uint256 _gameId)
+        external
+        view
+        returns (playerSignUp[32] memory players)
+    {
+        return gamePlayers[_gameId];
+    }
+
     function setGameDuration(uint256 _duration) public onlyOwner {
         gameDuration = _duration;
         emit updateGameDuration(_duration);

@@ -33,7 +33,7 @@ contract LeagueGame is
     IGameResult internal gameResult;
     ILeagueTeam internal leagueTeam;
 
-    Counters.Counter private gameIds;
+    Counters.Counter public gameIds;
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256[3] public prices; // 0 => Minimum Kick tokens to put at stake for signing up a team, 1 => price for declining challenge,

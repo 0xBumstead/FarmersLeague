@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 interface ILeagueGame {
+    function gameIds() external view returns (uint256 numberOfGames);
+
     function prices(uint256 _rank) external view returns (uint256 price);
 
     function challengeTime() external view returns (uint256 time);
@@ -18,23 +20,23 @@ interface ILeagueGame {
         view
         returns (uint256 gameData);
 
-    function teamChallenge(uint256 _challengedTeamId, uint256 _challengingTeamId)
-        external
-        view
-        returns (uint256 challengeDeadLine);
+    function teamChallenge(
+        uint256 _challengedTeamId,
+        uint256 _challengingTeamId
+    ) external view returns (uint256 challengeDeadLine);
 
     function requestIdToGameId(bytes32 _requestId)
         external
         view
         returns (uint256 requestIdToGameId);
 
-    function signUpTeam(uint256 _teamId, uint256 _layout, uint256 _stake)
-        external payable
-        returns (bool success);
+    function signUpTeam(
+        uint256 _teamId,
+        uint256 _layout,
+        uint256 _stake
+    ) external payable returns (bool success);
 
-    function cancelSignUp(uint256 _teamId)
-        external
-        returns (bool success);
+    function cancelSignUp(uint256 _teamId) external returns (bool success);
 
     function challengeTeam(uint256 _teamId, uint256 _opponentTeamId)
         external
@@ -48,7 +50,5 @@ interface ILeagueGame {
         external
         returns (bytes32 requestId);
 
-    function finishGame(uint256 _gameId, uint8 _result)
-        external
-        returns (bool success);
+    function finishGame(uint256 _gameId) external returns (bool success);
 }
