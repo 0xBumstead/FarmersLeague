@@ -1,5 +1,6 @@
 from web3 import Web3
 from scripts.helpful_scripts import get_account, get_contract, fund_with_link
+from scripts.store_positions_layouts import store_positions, store_layouts
 from brownie import (
     VerifiableRandomFootballer,
     Base64,
@@ -69,6 +70,8 @@ def deploy():
         player_loan.address,
         {"from": account},
     )
+    store_positions(player_rate.address)
+    store_layouts(player_rate.address)
     game_result = GameResult.deploy(
         player_rate.address, league_game.address, {"from": account}
     )

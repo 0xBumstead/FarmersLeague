@@ -7,8 +7,106 @@ from scripts.helpful_scripts import (
     fund_with_link,
 )
 from scripts.deploy import deploy
+from scripts.store_positions_layouts import store_positions, store_layouts
 from brownie import network, exceptions
 from brownie.network.state import Chain
+
+
+def test_can_store_positions():
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local testing")
+    owner = get_account()
+    not_owner = get_account(index=1)
+    (
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        player_rate,
+        _,
+        _,
+    ) = deploy()
+
+    # Store a position from an account not owner should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_rate.storePosition(45, 11, {"from": not_owner})
+
+    store_position_tx = player_rate.storePosition(45, 11, {"from": owner})
+    store_position_tx.wait(1)
+
+    assert player_rate.positionIds(45) == 11
+    assert store_position_tx.events["positionStored"]["positionId"] == 45
+    assert store_position_tx.events["positionStored"]["positionCode"] == 11
+
+
+def test_can_store_layouts():
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local testing")
+    owner = get_account()
+    not_owner = get_account(index=1)
+    (
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        player_rate,
+        _,
+        _,
+    ) = deploy()
+
+    # Store a position from an account not owner should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_rate.storePosition(45, 11, {"from": not_owner})
+
+    store_position_tx = player_rate.storeLayout(
+        4,
+        [
+            "110",
+            "1",
+            "2",
+            "0",
+            "0",
+            "0",
+            "21",
+            "10",
+            "30",
+            "22",
+            "30",
+            "33",
+            "33",
+            "33",
+            "33",
+            "33",
+        ],
+        {"from": owner},
+    )
+    store_position_tx.wait(1)
+
+    assert player_rate.layoutPositions(4, 0) == 110
+    assert player_rate.layoutPositions(4, 15) == 33
+    assert store_position_tx.events["layoutStored"]["layoutId"] == 4
+    assert store_position_tx.events["layoutStored"]["layoutPositions"] == [
+        "110",
+        "1",
+        "2",
+        "0",
+        "0",
+        "0",
+        "21",
+        "10",
+        "30",
+        "22",
+        "30",
+        "33",
+        "33",
+        "33",
+        "33",
+        "33",
+    ]
 
 
 def test_can_sign_up_player():
