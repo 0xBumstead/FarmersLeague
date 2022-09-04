@@ -318,7 +318,7 @@ def test_can_calculate_players_rates():
     assert player_rate.gamePlayers(game_id, position_id) == (
         captain_id,
         blockSigned,
-        5,
+        6,
         11,
     )
 

@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 import "./Base64.sol";
+import "./UnsafeMath.sol";
 
 library SvgLib {
     struct Image {
@@ -139,6 +140,7 @@ library SvgLib {
 library MetadataLib {
     using Strings for uint256;
     using SvgLib for string;
+    using UnsafeMath8 for uint8;
 
     struct Metadata {
         string strAttributes; // Attributes as string used in the token URI
@@ -198,10 +200,13 @@ library MetadataLib {
         );
 
         // Preferred positions is stored as uint, see PlayerRate contract for correspondence
-        _uintAttributes[0] = scores[0] * 10 + scores[1];
+        _uintAttributes[0] = UnsafeMath8.unsafe_add(
+            UnsafeMath8.unsafe_mul(scores[0], 10),
+            scores[1]
+        );
 
         // Compatibles positions (loop through the number of compatible positions)
-        for (uint8 i = 0; i < scores[2]; ++i) {
+        for (uint8 i = 0; i < scores[2]; i = i.unsafe_increment()) {
             // Compatible position is made from a line and a side
             uint256 _positionLine = uint256(
                 keccak256(abi.encode(_randomValues[3], i))
@@ -210,10 +215,10 @@ library MetadataLib {
                 keccak256(abi.encode(_randomValues[3], i))
             ) % 3;
             // Compatible positions are stored as uint, see PlayerRate contract for correspondence
-            _uintAttributes[i + 1] =
-                uint8(_positionLine) *
-                10 +
-                uint8(_positionSide);
+            _uintAttributes[i + 1] = UnsafeMath8.unsafe_add(
+                UnsafeMath8.unsafe_mul(uint8(_positionLine), 10),
+                uint8(_positionSide)
+            );
             strPositions[1] = string.concat(
                 positionLine4[_positionLine],
                 positionSide3[_positionSide]
@@ -236,22 +241,52 @@ library MetadataLib {
         if (scores[0] == 10) {
             scores[0] = 0;
         } else {
-            scores[0]++;
+            scores[0].unsafe_increment;
         }
 
-        scores[4] = uint8(_randomValues[4] % 100) + 1; // Used for defense rating
-        scores[5] = uint8(_randomValues[5] % 100) + 1; // Used for attack rating
+        scores[4] = uint8(_randomValues[4] % 100).unsafe_increment(); // Used for defense rating
+        scores[5] = uint8(_randomValues[5] % 100).unsafe_increment(); // Used for attack rating
 
         // The more defensive preferred position a player has, the higher his chances to get a good defense rating
         // scores[0] is preferred position line, out of 11, low numbers for defense, high numbers for attack
-        if (scores[4] > (scores[0] * 10) / 3) {
-            ratings[0] = (scores[4] - (scores[0] * 10) / 3) / 10;
+        if (
+            scores[4] >
+            UnsafeMath8.unsafe_div(UnsafeMath8.unsafe_mul(scores[0], 10), 3)
+        ) {
+            ratings[0] = UnsafeMath8.unsafe_div(
+                UnsafeMath8.unsafe_sub(
+                    scores[4],
+                    UnsafeMath8.unsafe_div(
+                        UnsafeMath8.unsafe_mul(scores[0], 10),
+                        3
+                    )
+                ),
+                10
+            );
         } else {
             ratings[0] = 0;
         }
         // The more defensive preferred position a player has, the lower his chances to get a good attack rating
-        if (scores[5] > (100 - scores[0] * 10) / 3) {
-            ratings[1] = (scores[5] - (100 - scores[0] * 10) / 3) / 10;
+        if (
+            scores[5] >
+            UnsafeMath8.unsafe_div(
+                UnsafeMath8.unsafe_sub(
+                    100,
+                    UnsafeMath8.unsafe_mul(scores[0], 10)
+                ),
+                3
+            )
+        ) {
+            ratings[1] = UnsafeMath8.unsafe_div(
+                UnsafeMath8.unsafe_sub(
+                    scores[5],
+                    UnsafeMath8.unsafe_div(
+                        UnsafeMath8.unsafe_mul(scores[0], 10),
+                        3
+                    )
+                ),
+                10
+            );
         } else {
             ratings[1] = 0;
         }
@@ -290,7 +325,10 @@ library MetadataLib {
         // rightLeg (0 = fixed, 1 = moving with ball)
         // Only very good defensive and attacking players can get a chance to have a moving right leg
         scores[10] = uint8(_randomValues[10] % 4);
-        if (scores[10] == 3 && ratings[0] + ratings[1] > 10) {
+        if (
+            scores[10] == 3 &&
+            UnsafeMath8.unsafe_add(ratings[0], ratings[1]) > 10
+        ) {
             scores[10] = 1;
         } else {
             scores[10] = 0;

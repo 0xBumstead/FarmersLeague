@@ -771,11 +771,11 @@ def test_can_withdraw_link():
     with pytest.raises(exceptions.VirtualMachineError):
         league_game.withdrawLink({"from": not_owner})
 
-    owner_balance = link_token.balanceOf(owner)
+    owner_balance = Web3.fromWei(link_token.balanceOf(owner), "ether")
     withdraw_tx = league_game.withdrawLink({"from": owner})
     withdraw_tx.wait(1)
 
-    assert link_token.balanceOf(owner) == owner_balance + Web3.toWei(100, "ether")
+    assert Web3.fromWei(link_token.balanceOf(owner), "ether") == owner_balance + 100 + 1
     assert link_token.balanceOf(league_game) == 0
 
 

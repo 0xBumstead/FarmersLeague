@@ -6,6 +6,7 @@ import "./PlayerOwnership.sol";
 import "../interfaces/ILeagueTeam.sol";
 import "../interfaces/ILeagueGame.sol";
 import "./PlayerOwnership.sol";
+import "./UnsafeMath.sol";
 
 error TooEarly(uint256 time, uint256 requested);
 error NotInTeam();
@@ -15,6 +16,8 @@ error NoCurrentGame();
 error PositionNotAvailable();
 
 contract PlayerRate is Ownable, PlayerOwnership {
+    using UnsafeMath8 for uint8;
+
     ILeagueTeam internal leagueTeam;
     ILeagueGame internal leagueGame;
 
@@ -175,7 +178,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
         layoutPositions[0][15] = 33; // 5-4-1 SUB
 
         layoutPositions[1][0] = 110; // 5-4-1* GK
-        layoutPositions[1][2] = 1; // 5-4-1* DR
+        layoutPositions[1][1] = 1; // 5-4-1* DR
         layoutPositions[1][2] = 2; // 5-4-1* DL
         layoutPositions[1][3] = 0; // 5-4-1* DC
         layoutPositions[1][4] = 0; // 5-4-1* DC
@@ -433,21 +436,21 @@ contract PlayerRate is Ownable, PlayerOwnership {
 
         uint8 _subsCount;
         // Count the substitutes of home team
-        for (uint8 i = 11; i < 16; i++) {
+        for (uint8 i = 11; i < 16; i = i.unsafe_increment()) {
             if (gamePlayers[_gameId][i].playerId > 0) {
-                _subsCount++;
+                _subsCount = _subsCount.unsafe_increment();
             }
         }
         // Loop through the home team players
-        for (uint8 i = 0; i < 11; i++) {
+        for (uint8 i = 0; i < 11; i = i.unsafe_increment()) {
             uint16 _playerId = gamePlayers[_gameId][i].playerId;
             uint8 _bonus = 0;
 
             // Bonus for home team
-            _bonus += 1;
+            _bonus = _bonus.unsafe_increment();
             if (leagueTeam.teamMembers(_teamId, 1) == _playerId) {
                 // Bonus for captain
-                _bonus += 1;
+                _bonus = _bonus.unsafe_increment();
             }
             if (
                 layoutPositions[_layoutId][i] ==
@@ -456,7 +459,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 ]
             ) {
                 // Bonus for preferred position
-                _bonus += 2;
+                _bonus = UnsafeMath8.unsafe_add(_bonus, 2);
             } else if (
                 layoutPositions[_layoutId][i] ==
                 verifiableRandomFootballer.tokenIdToAttributes(_playerId, 1) ||
@@ -466,35 +469,35 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 verifiableRandomFootballer.tokenIdToAttributes(_playerId, 3)
             ) {
                 // Bonus for compatible position
-                _bonus += 1;
+                _bonus = _bonus.unsafe_increment();
             }
             if (_subsCount > 2) {
                 // Bonus for at least 3 three subs
-                _bonus += 1;
+                _bonus = _bonus.unsafe_increment();
             }
             if (_subsCount > 4) {
                 // Bonus for 5 subs
-                _bonus += 1;
+                _bonus = _bonus.unsafe_increment();
             }
             if (gamePlayers[_playerId][i].blockSigned < _gameStart) {
                 // Penalty for too early sign up
                 if (_bonus < 2) {
                     _bonus = 0;
                 } else {
-                    _bonus -= 2;
+                    _bonus = UnsafeMath8.unsafe_sub(_bonus, 2);
                 }
             } else if (
                 gamePlayers[_playerId][i].blockSigned - _gameStart <
                 gameDuration / 6
             ) {
                 // Bonus for early sign up
-                _bonus += 2;
+                _bonus = UnsafeMath8.unsafe_add(_bonus, 2);
             } else if (
                 gamePlayers[_playerId][i].blockSigned - _gameStart <
                 gameDuration / 2
             ) {
                 // Bonus for first half sign up
-                _bonus += 1;
+                _bonus = _bonus.unsafe_increment();
             }
             if (
                 _gameStart - leagueGame.games(playerLastGame[_playerId], 0) <
@@ -504,7 +507,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 if (_bonus < 2) {
                     _bonus = 0;
                 } else {
-                    _bonus -= 2;
+                    _bonus = UnsafeMath8.unsafe_sub(_bonus, 2);
                 }
             }
             if (
@@ -515,7 +518,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 if (_bonus < 1) {
                     _bonus = 0;
                 } else {
-                    _bonus -= 1;
+                    _bonus = _bonus.unsafe_decrement();
                 }
             }
             if (
@@ -526,7 +529,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 if (_bonus < 2) {
                     _bonus = 0;
                 } else {
-                    _bonus -= 2;
+                    _bonus = UnsafeMath8.unsafe_sub(_bonus, 2);
                 }
             }
             if (
@@ -534,7 +537,7 @@ contract PlayerRate is Ownable, PlayerOwnership {
                 leagueGame.teamGame(leagueGame.games(_gameId, 2), 3)
             ) {
                 // Bonus for higher team stake
-                _bonus += 2;
+                _bonus = UnsafeMath8.unsafe_add(_bonus, 2);
             }
 
             if (_bonus > 10) _bonus = 10;
@@ -664,12 +667,14 @@ contract PlayerRate is Ownable, PlayerOwnership {
             playerSignUp memory _playerSignUp;
             _playerSignUp.playerId = _playerId;
             _playerSignUp.blockSigned = gamePlayers[_gameId][j].blockSigned;
-            _playerSignUp.defenseRate =
-                verifiableRandomFootballer.tokenIdToAttributes(_playerId, 4) +
-                _bonus;
-            _playerSignUp.attackRate =
-                verifiableRandomFootballer.tokenIdToAttributes(_playerId, 5) +
-                _bonus;
+            _playerSignUp.defenseRate = UnsafeMath8.unsafe_add(
+                verifiableRandomFootballer.tokenIdToAttributes(_playerId, 4),
+                _bonus
+            );
+            _playerSignUp.attackRate = UnsafeMath8.unsafe_add(
+                verifiableRandomFootballer.tokenIdToAttributes(_playerId, 5),
+                _bonus
+            );
 
             gamePlayers[_gameId][j] = _playerSignUp; // Saves the player to calculate their goals scored in the GameResult Contract
             playerLastGame[_playerId] = _gameId; // Save the game as last player game to calculate the duration between two games in which the player participated

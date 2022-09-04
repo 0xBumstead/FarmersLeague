@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./UnsafeMath.sol";
 
 error NotOwner(address sender, address owner);
 error AlreadyListed();
@@ -13,6 +14,8 @@ error NotApproved();
 error BalanceTooLow(uint256 balance, uint256 requested);
 
 contract PlayerTransfer is Ownable, ReentrancyGuard {
+    using UnsafeMath256 for uint256;
+
     IERC20 public kickToken;
     IERC721 public verifiableRandomFootballer;
 
@@ -38,7 +41,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             revert NotApproved();
         playersForTransfer[_playerId] = _price;
         uint256 _listLength = transferList.length;
-        for (uint256 i = 0; i < _listLength; ++i) {
+        for (uint256 i = 0; i < _listLength; i = i.unsafe_increment()) {
             if (transferList[i] == 0) {
                 transferList[i] = _playerId;
                 break;
@@ -60,7 +63,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             );
         if (playersForTransfer[_playerId] <= 0) revert NotListed();
         playersForTransfer[_playerId] = 0;
-        for (uint256 i = 0; i < transferList.length; ++i) {
+        for (uint256 i = 0; i < transferList.length; i = i.unsafe_increment()) {
             if (transferList[i] == _playerId) {
                 transferList[i] = 0;
                 break;
@@ -89,7 +92,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
             _playerId
         );
         playersForTransfer[_playerId] = 0; //remove the player from the transfer list
-        for (uint256 i = 0; i < transferList.length; ++i) {
+        for (uint256 i = 0; i < transferList.length; i = i.unsafe_increment()) {
             if (transferList[i] == _playerId) {
                 transferList[i] = 0;
                 break;

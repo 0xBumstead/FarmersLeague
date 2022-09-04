@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./PlayerOwnership.sol";
+import "./UnsafeMath.sol";
 
 error OnLoan();
 error AlreadyInTeam(uint256 teamId);
@@ -17,6 +18,7 @@ error CaptainId();
 error NotInTeam();
 
 contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
+    using UnsafeMath8 for uint8;
     using Counters for Counters.Counter;
     IERC20 public kickToken;
 
@@ -88,7 +90,7 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
                 verifiableRandomFootballer.ownerOf(_captainId)
             ); // Only its true owner can use a player to delete a team, this cannot be done through loan ownership
         if (_term > block.number) revert OnLoan();
-        for (uint8 i = 0; i < 23; ++i) {
+        for (uint8 i = 0; i < 23; i = i.unsafe_increment()) {
             // Loop through all the players of the team and erase them from the team
             playersTeam[teamMembers[_teamId][i]] = 0;
             teamMembers[_teamId][i] = 0;
@@ -115,12 +117,15 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
         onlyPlayerOwner(_playerId)
     {
         uint16 _applicationsNumber = teamApplications[_teamId][0];
-        for (uint16 i = 1; i <= _applicationsNumber; ++i) {
+        for (uint16 i = 1; i <= _applicationsNumber; ) {
             // Loop through the applications to find the player
             if (teamApplications[_teamId][i] == _playerId) {
                 teamApplications[_teamId][i] = 0; // remove the application
                 playersApplication[_playerId] = 0; // clear the player application
                 break;
+            }
+            unchecked {
+                ++i;
             }
         }
         emit applicationCanceled(_playerId, _teamId);
@@ -133,11 +138,15 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
         uint8 _playersNumber = uint8(teamMembers[_teamId][0]);
         if (_playersNumber >= 23) revert TeamFull();
         uint16 _applicationsNumber = teamApplications[_teamId][0];
-        for (uint16 i = 1; i <= _applicationsNumber; ++i) {
+        for (uint16 i = 1; i <= _applicationsNumber; ) {
             // Loop through the applications to find the player
             if (teamApplications[_teamId][i] == _playerId) {
                 teamApplications[_teamId][i] = 0; // remove application
-                for (uint8 j = 2; j <= _playersNumber + 1; j++) {
+                for (
+                    uint8 j = 2;
+                    j <= _playersNumber + 1;
+                    j = j.unsafe_increment()
+                ) {
                     // Loop through the team members to find an empty position
                     if (teamMembers[_teamId][j] == 0) {
                         teamMembers[_teamId][j] = _playerId; // enroll player
@@ -150,6 +159,9 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
                 }
                 break;
             }
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -158,11 +170,14 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
         onlyPlayerOwner(teamMembers[_teamId][1])
     {
         uint16 _applicationsNumber = teamApplications[_teamId][0];
-        for (uint16 i = 1; i <= _applicationsNumber; ++i) {
+        for (uint16 i = 1; i <= _applicationsNumber; ) {
             uint16 _playerId = teamApplications[_teamId][i];
             if (_playerId != 0) {
                 playersApplication[_playerId] = 0; // clear the player application
                 teamApplications[_teamId][i] = 0; // remove all players id from applications
+            }
+            unchecked {
+                ++i;
             }
         }
         emit applicationsCleared(_teamId);
@@ -179,7 +194,7 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
 
     function removePlayer(uint16 _playerId, uint256 _teamId) internal {
         uint16 _playersNumber = teamMembers[_teamId][0];
-        for (uint16 i = 2; i <= _playersNumber; ++i) {
+        for (uint16 i = 2; i <= _playersNumber; ) {
             // Loop through the team members to find the player
             if (teamMembers[_teamId][i] == _playerId) {
                 teamMembers[_teamId][i] = 0; // remove the player from the team
@@ -187,6 +202,9 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
                 playersTeam[_playerId] = 0; // unmark the player as team member
                 emit playerReleased(_playerId, _teamId);
                 break;
+            }
+            unchecked {
+                ++i;
             }
         }
     }
@@ -239,7 +257,7 @@ contract LeagueTeam is Ownable, ReentrancyGuard, PlayerOwnership {
         view
         returns (uint16[23] memory membersArray)
     {
-        for (uint8 i = 1; i < 24; ++i) {
+        for (uint8 i = 1; i < 24; i = i.unsafe_increment()) {
             membersArray[i - 1] = (teamMembers[_teamId][i]);
         }
     }

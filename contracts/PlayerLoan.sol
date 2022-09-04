@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./UnsafeMath.sol";
 
 error NotOwner(address sender, address owner);
 error AlreadyListed();
@@ -14,6 +15,8 @@ error BalanceTooLow(uint256 balance, uint256 requested);
 error MaxDuration(uint256 duration, uint256 maximum);
 
 contract PlayerLoan is Ownable, ReentrancyGuard {
+    using UnsafeMath256 for uint256;
+
     IERC20 public kickToken;
     IERC721 public verifiableRandomFootballer;
 
@@ -59,7 +62,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         _listing.price = _price;
         playersForLoan[_playerId] = _listing;
         uint256 _listLength = loanList.length;
-        for (uint256 i = 0; i < _listLength; ++i) {
+        for (uint256 i = 0; i < _listLength; i = i.unsafe_increment()) {
             if (loanList[i] == 0) {
                 loanList[i] = _playerId;
                 break;
@@ -84,7 +87,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         _listing.duration = 0;
         _listing.price = 0;
         playersForLoan[_playerId] = _listing;
-        for (uint256 i = 0; i < loanList.length; ++i) {
+        for (uint256 i = 0; i < loanList.length; i = i.unsafe_increment()) {
             if (loanList[i] == _playerId) {
                 loanList[i] = 0;
                 break;
