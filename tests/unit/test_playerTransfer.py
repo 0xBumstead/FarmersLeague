@@ -54,6 +54,11 @@ def test_can_list_player():
         player_transfer.listPlayerForTransfer(
             Web3.toWei(2, "ether"), token_id, {"from": owner}
         )
+    # Listing for 0 should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_transfer.listPlayerForTransfer(
+            Web3.toWei(0, "ether"), token_id, {"from": owner}
+        )
 
     # List for transfer the player
     approve_tx = verifiable_random_footballer.approve(player_transfer.address, token_id)
@@ -199,6 +204,10 @@ def test_can_transfer_player():
     # Transfer a player not listed should fail
     with pytest.raises(exceptions.VirtualMachineError):
         player_transfer.transfer(token_id_not_for_transfer, {"from": not_owner})
+
+    # Transfer from the owner should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_transfer.transfer(token_id_for_transfer, {"from": owner})
 
     transfer_tx = player_transfer.transfer(token_id_for_transfer, {"from": not_owner})
     transfer_tx.wait(1)

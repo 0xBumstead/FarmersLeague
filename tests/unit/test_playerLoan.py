@@ -50,10 +50,15 @@ def test_can_list_player():
         player_loan.listPlayerForLoan(
             1000, Web3.toWei(2, "ether"), token_id, {"from": not_owner}
         )
-    # Listing for more than 1,300,000 should fail
+    # Listing for more than 1,300,000 blocks should fail
     with pytest.raises(exceptions.VirtualMachineError):
         player_loan.listPlayerForLoan(
             1400000, Web3.toWei(2, "ether"), token_id, {"from": owner}
+        )
+    # Listing for 0 should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_loan.listPlayerForLoan(
+            1400000, Web3.toWei(0, "ether"), token_id, {"from": owner}
         )
 
     # List for loan the player
@@ -196,6 +201,10 @@ def test_can_loan_player():
     with pytest.raises(exceptions.VirtualMachineError):
         player_loan.loan(token_id_not_for_loan, {"from": not_owner})
 
+    # Loan a player from the owner should fail
+    with pytest.raises(exceptions.VirtualMachineError):
+        player_loan.loan(token_id_for_loan, {"from": owner})
+
     loan_tx = player_loan.loan(token_id_for_loan, {"from": not_owner})
     loan_tx.wait(1)
     chain = Chain()
@@ -213,6 +222,9 @@ def test_can_loan_player():
     assert loan_tx.events["loanPlayer"]["tokenId"] == token_id_for_loan
     assert loan_tx.events["loanPlayer"]["borrower"] == not_owner
     assert loan_tx.events["loanPlayer"]["term"] == len(chain) + 1000 - 2
+    assert loan_tx.events["unlistingPlayer"]["tokenId"] == token_id_for_loan
+    assert player_loan.playersForLoan(token_id_for_loan) == (0, 0)
+    assert player_loan.getLoanListArray() == (0,)
 
 
 def test_can_withdraw():

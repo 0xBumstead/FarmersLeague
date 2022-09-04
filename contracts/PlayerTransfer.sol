@@ -9,9 +9,11 @@ import "./UnsafeMath.sol";
 
 error NotOwner(address sender, address owner);
 error AlreadyListed();
+error ListingToZero();
 error NotListed();
 error NotApproved();
 error BalanceTooLow(uint256 balance, uint256 requested);
+error AlreadyOwner();
 
 contract PlayerTransfer is Ownable, ReentrancyGuard {
     using UnsafeMath256 for uint256;
@@ -39,6 +41,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
         if (playersForTransfer[_playerId] > 0) revert AlreadyListed();
         if (verifiableRandomFootballer.getApproved(_playerId) != address(this))
             revert NotApproved();
+        if (_price == 0) revert ListingToZero();
         playersForTransfer[_playerId] = _price;
         uint256 _listLength = transferList.length;
         for (uint256 i = 0; i < _listLength; i = i.unsafe_increment()) {
@@ -78,6 +81,7 @@ contract PlayerTransfer is Ownable, ReentrancyGuard {
         if (_price > kickToken.balanceOf(msg.sender))
             revert BalanceTooLow(kickToken.balanceOf(msg.sender), _price);
         if (playersForTransfer[_playerId] <= 0) revert NotListed();
+        if (_seller == msg.sender) revert AlreadyOwner();
         // 97.5% of the listing price goes to the owner of the player
         kickToken.transferFrom(msg.sender, _seller, (_price * 9750) / 10000);
         // 2.5% goes to this contract

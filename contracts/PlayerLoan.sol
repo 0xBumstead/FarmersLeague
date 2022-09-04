@@ -9,10 +9,12 @@ import "./UnsafeMath.sol";
 
 error NotOwner(address sender, address owner);
 error AlreadyListed();
+error ListingToZero();
 error NotListed();
 error AlreadyOnLoan();
 error BalanceTooLow(uint256 balance, uint256 requested);
 error MaxDuration(uint256 duration, uint256 maximum);
+error AlreadyOwner();
 
 contract PlayerLoan is Ownable, ReentrancyGuard {
     using UnsafeMath256 for uint256;
@@ -58,6 +60,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
         if (_listing.duration > 0) revert AlreadyListed();
         if (_duration > maximumDuration)
             revert MaxDuration(_duration, maximumDuration);
+        if (_price == 0) revert ListingToZero();
         _listing.duration = _duration;
         _listing.price = _price;
         playersForLoan[_playerId] = _listing;
@@ -105,6 +108,7 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
             revert BalanceTooLow(kickToken.balanceOf(msg.sender), _price);
         if (_listing.duration <= 0) revert NotListed();
         if (block.number < loans[_playerId].term) revert AlreadyOnLoan();
+        if (_lender == msg.sender) revert AlreadyOwner();
         LoanTerm memory loanTerm;
         loanTerm.borrower = msg.sender;
         loanTerm.term = _term;
@@ -117,7 +121,18 @@ contract PlayerLoan is Ownable, ReentrancyGuard {
             address(this),
             (_price * 250) / 10000
         );
+        // Unlist the player
+        _listing.duration = 0;
+        _listing.price = 0;
+        playersForLoan[_playerId] = _listing;
+        for (uint256 i = 0; i < loanList.length; i = i.unsafe_increment()) {
+            if (loanList[i] == _playerId) {
+                loanList[i] = 0;
+                break;
+            }
+        }
         emit loanPlayer(_playerId, msg.sender, _term);
+        emit unlistingPlayer(_playerId);
     }
 
     function getLoanListArray()
